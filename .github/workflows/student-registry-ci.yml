@@ -1,0 +1,36 @@
+name: CI Workflow - Student Registry App
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Start the Application
+      run: npm start &
+      env:
+        CI: true  # Ensures that npm doesn't hang on interactive prompts
+   
+    - name: Run Tests
+      run: npm test
